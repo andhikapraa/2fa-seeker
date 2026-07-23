@@ -25,7 +25,55 @@ function expectSecretResponseHeaders(response: Response): void {
   expect(response.headers.get("Access-Control-Allow-Origin")).toBeNull();
 }
 
+function expectPublicPageHeaders(response: Response): void {
+  expect(response.headers.get("Cache-Control")).toBe("no-store");
+  expect(response.headers.get("Referrer-Policy")).toBe("no-referrer");
+  expect(response.headers.get("X-Content-Type-Options")).toBe("nosniff");
+  expect(response.headers.get("X-Frame-Options")).toBe("DENY");
+  expect(response.headers.get("X-Robots-Tag")).toBe(
+    "all, max-image-preview:large, max-snippet:-1, max-video-preview:-1",
+  );
+  expect(response.headers.get("Vary")).toContain("Accept");
+  expect(response.headers.get("Access-Control-Allow-Origin")).toBeNull();
+}
+
 describe("Worker route contract", () => {
+  it("serves one canonical indexable landing page", async () => {
+    const response = await dispatch("/");
+    const body = await response.text();
+
+    expect(response.status).toBe(200);
+    expect(response.headers.get("Content-Type")).toBe("text/html; charset=utf-8");
+    expect(body).toContain("<title>TOTP Generator – Browser-Local 2FA Codes</title>");
+    expect(body).toContain('rel="canonical" href="https://2fa.prasetya.dev/"');
+    expect(body).toContain('property="og:image" content="https://2fa.prasetya.dev/og.png"');
+    expect(body).toContain('name="twitter:card" content="summary_large_image"');
+    expect(body).not.toContain('content="noindex');
+
+    const jsonLd = body.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/);
+    expect(jsonLd).not.toBeNull();
+    const structuredData = JSON.parse(jsonLd?.[1] ?? "null") as {
+      "@graph": Array<{ "@type": string; url: string; name: string }>;
+    };
+    expect(structuredData["@graph"]).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          "@type": "WebSite",
+          url: "https://2fa.prasetya.dev/",
+          name: "2FA TOTP Generator",
+        }),
+        expect.objectContaining({
+          "@type": "WebApplication",
+          url: "https://2fa.prasetya.dev/",
+          name: "2FA TOTP Generator",
+        }),
+      ]),
+    );
+    expect(response.headers.get("Content-Security-Policy")).toContain(
+      "sha256-o31zVbnJSaKChU826SH0xS6s3t/WWL5saEF/Bl2U1GI=",
+    );
+    expectPublicPageHeaders(response);
+  });
   it("returns only code plus newline for the default direct GET", async () => {
     const response = await dispatch(`/${RFC_BASE32_SECRET}`);
     expect(response.status).toBe(200);
@@ -85,7 +133,7 @@ describe("Worker route contract", () => {
     expectSecretResponseHeaders(response);
   });
 
-  it("serves the favicon, web icons, and manifest", async () => {
+  it("serves crawlable identity assets and discovery files with public caching", async () => {
     const assets = [
       ["/favicon.ico", "image/"],
       ["/icons/icon.svg", "image/svg+xml"],
@@ -94,6 +142,9 @@ describe("Worker route contract", () => {
       ["/icons/icon-192.png", "image/png"],
       ["/icons/icon-512.png", "image/png"],
       ["/icons/apple-touch-icon.png", "image/png"],
+      ["/og.png", "image/png"],
+      ["/robots.txt", "text/plain"],
+      ["/sitemap.xml", "application/xml"],
       ["/site.webmanifest", "application/manifest+json"],
     ] as const;
 
@@ -101,6 +152,48 @@ describe("Worker route contract", () => {
       const response = await dispatch(path);
       expect(response.status, path).toBe(200);
       expect(response.headers.get("Content-Type"), path).toContain(contentType);
+      expect(response.headers.get("Cache-Control"), path).toBe("public, max-age=86400");
+      expect(response.headers.get("X-Robots-Tag"), path).toBeNull();
+    }
+
+    const robots = await (await dispatch("/robots.txt")).text();
+    expect(robots).toContain("Allow: /");
+    expect(robots).toContain("Disallow: /api/");
+    expect(robots).toContain("Disallow: /s/");
+    expect(robots).toContain("Sitemap: https://2fa.prasetya.dev/sitemap.xml");
+
+    const sitemap = await (await dispatch("/sitemap.xml")).text();
+    expect(sitemap).toContain("<loc>https://2fa.prasetya.dev/</loc>");
+    expect(sitemap).not.toContain("/slow");
+    expect(sitemap).not.toContain("/1k");
+
+    const font = await dispatch("/fonts/space-grotesk-400.woff2");
+    expect(font.status).toBe(200);
+    expect(font.headers.get("Cache-Control")).toBe("public, max-age=604800");
+    expect(font.headers.get("X-Robots-Tag")).toBeNull();
+
+    const shell = await (await dispatch("/")).text();
+    const fingerprintedPath = shell.match(/(?:src|href)="(\/assets\/[^"]+)"/)?.[1];
+    expect(fingerprintedPath).toBeDefined();
+    const fingerprintedAsset = await dispatch(fingerprintedPath ?? "/assets/missing");
+    expect(fingerprintedAsset.status).toBe(200);
+    expect(fingerprintedAsset.headers.get("Cache-Control")).toBe(
+      "public, max-age=31536000, immutable",
+    );
+    expect(fingerprintedAsset.headers.get("X-Robots-Tag")).toBeNull();
+  });
+
+  it("keeps missing static assets private instead of serving the application shell", async () => {
+    for (const path of ["/assets/not-real.js", "/fonts/missing.woff2", "/icons/missing.png"]) {
+      const response = await dispatch(path);
+
+      expect(response.status, path).toBe(404);
+      expect(response.headers.get("Content-Type"), path).toBe("text/plain; charset=utf-8");
+      expect(response.headers.get("Cache-Control"), path).toBe("no-store");
+      expect(response.headers.get("X-Robots-Tag"), path).toBe(
+        "noindex, nofollow, noarchive, nosnippet",
+      );
+      expect(await response.text(), path).toBe("Not found.\n");
     }
   });
 

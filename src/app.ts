@@ -61,7 +61,7 @@ const codeAccessible = requireElement<HTMLElement>("#code-accessible");
 const codeGroupOne = requireElement<HTMLElement>("#code-group-one");
 const codeGroupTwo = requireElement<HTMLElement>("#code-group-two");
 const timerText = requireElement<HTMLElement>("#timer-text");
-const timerBar = requireElement<HTMLElement>("#timer-bar");
+const timerBar = requireElement<HTMLProgressElement>("#timer-bar");
 const copyCodeButton = requireElement<HTMLButtonElement>("#copy-code");
 const copyFeedback = requireElement<HTMLElement>("#copy-feedback");
 const clockNote = requireElement<HTMLElement>("#clock-note");
@@ -125,7 +125,7 @@ function renderNoResult(): void {
   codeGroupOne.textContent = "";
   codeGroupTwo.textContent = "";
   timerText.textContent = "";
-  timerBar.style.transform = "scaleX(0)";
+  timerBar.value = 0;
   setCopyFeedback(null);
 }
 
@@ -141,7 +141,7 @@ function renderComputing(parameters: TotpParameters): void {
   copyCodeButton.disabled = true;
 }
 
-function renderValidResult(result: TotpResult, resetTimer: boolean): void {
+function renderValidResult(result: TotpResult): void {
   instrument.classList.remove("is-computing");
   instrument.classList.add("is-valid");
   const splitAt = result.digits === 6 ? 3 : 4;
@@ -154,14 +154,7 @@ function renderValidResult(result: TotpResult, resetTimer: boolean): void {
   codeGroupOne.textContent = result.code.slice(0, splitAt);
   codeGroupTwo.textContent = result.code.slice(splitAt);
   timerText.textContent = `Valid for ${result.secondsRemaining} ${result.secondsRemaining === 1 ? "second" : "seconds"}`;
-  if (resetTimer) {
-    timerBar.classList.add("is-resetting");
-    timerBar.style.transform = `scaleX(${result.progress})`;
-    void timerBar.offsetWidth;
-    timerBar.classList.remove("is-resetting");
-  } else {
-    timerBar.style.transform = `scaleX(${result.progress})`;
-  }
+  timerBar.value = result.progress;
   copyCodeButton.disabled = false;
   clockNote.hidden = false;
 }
@@ -220,7 +213,7 @@ function updateActiveGeneration(
   if (activeGeneration !== active || revision !== active.revision) return null;
 
   active.result = result;
-  renderValidResult(result, previousCounter === undefined || previousCounter !== result.counter);
+  renderValidResult(result);
   scheduleNextUpdate(active, sampledAtMs);
 
   if (announceRollover && previousCounter !== undefined && previousCounter !== result.counter) {

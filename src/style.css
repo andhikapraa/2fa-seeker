@@ -548,24 +548,28 @@ select[aria-invalid="true"] {
   letter-spacing: 0.04em;
 }
 
-.timer-track {
-  height: 4px;
-  overflow: hidden;
-  background: var(--cell-hi);
-}
-
 .timer-bar {
   display: block;
   width: 100%;
-  height: 100%;
-  transform: scaleX(0);
-  transform-origin: left center;
-  background: var(--gold);
-  transition: transform 1s linear;
+  height: 4px;
+  overflow: hidden;
+  appearance: none;
+  border: 0;
+  border-radius: 0;
+  background: var(--cell-hi);
+  color: var(--gold);
 }
 
-.timer-bar.is-resetting {
-  transition: none;
+.timer-bar::-webkit-progress-bar {
+  background: var(--cell-hi);
+}
+
+.timer-bar::-webkit-progress-value {
+  background: var(--gold);
+}
+
+.timer-bar::-moz-progress-bar {
+  background: var(--gold);
 }
 
 .copy-feedback {
@@ -836,23 +840,21 @@ pre {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
   }
-
-  .timer-bar {
-    transition: none;
-  }
 }
 
 @media (forced-colors: active) {
-  .timer-track,
   .timer-bar {
     forced-color-adjust: none;
+    background: CanvasText;
+    color: Highlight;
   }
 
-  .timer-track {
+  .timer-bar::-webkit-progress-bar {
     background: CanvasText;
   }
 
-  .timer-bar {
+  .timer-bar::-webkit-progress-value,
+  .timer-bar::-moz-progress-bar {
     background: Highlight;
   }
 }

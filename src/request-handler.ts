@@ -9,7 +9,12 @@ import {
   negotiateRepresentation,
   type Representation,
 } from "./shared/representations";
-import { applySecurityHeaders, applyVaryAccept } from "./shared/security";
+import {
+  PUBLIC_ROBOTS_DIRECTIVE,
+  applySecurityHeaders,
+  applyVaryAccept,
+  type SecurityHeaderOptions,
+} from "./shared/security";
 import {
   TotpParameterError,
   generateTotp,
@@ -103,6 +108,7 @@ async function htmlAssetResponse(
   env: Env,
   assetPath: string,
   head: boolean,
+  securityOptions?: SecurityHeaderOptions,
 ): Promise<Response> {
   const rootUrl = new URL(assetPath, request.url);
   const assetRequest = new Request(rootUrl, {
@@ -113,7 +119,7 @@ async function htmlAssetResponse(
   const headers = new Headers(assetResponse.headers);
   headers.set("Content-Type", REPRESENTATION_CONTENT_TYPES.html);
   applyVaryAccept(headers);
-  applySecurityHeaders(headers);
+  applySecurityHeaders(headers, securityOptions);
 
   return new Response(head ? null : assetResponse.body, {
     status: assetResponse.status,
@@ -122,10 +128,46 @@ async function htmlAssetResponse(
   });
 }
 
-async function staticAssetResponse(request: Request, env: Env): Promise<Response> {
+function staticAssetCacheControl(pathname: string): string {
+  if (pathname.startsWith("/assets/")) {
+    return "public, max-age=31536000, immutable";
+  }
+  if (pathname.startsWith("/fonts/")) return "public, max-age=604800";
+  return "public, max-age=86400";
+}
+
+async function staticAssetResponse(
+  request: Request,
+  env: Env,
+  pathname: string,
+): Promise<Response> {
   const assetResponse = await env.ASSETS.fetch(request);
   const headers = new Headers(assetResponse.headers);
-  applySecurityHeaders(headers);
+  const htmlFallback =
+    assetResponse.ok && headers.get("Content-Type")?.startsWith("text/html") === true;
+
+  if (assetResponse.status === 404 || htmlFallback) {
+    headers.set("Content-Type", REPRESENTATION_CONTENT_TYPES.plain);
+    applySecurityHeaders(headers);
+    return new Response(request.method === "HEAD" ? null : "Not found.\n", {
+      status: 404,
+      headers,
+    });
+  }
+
+  if (!assetResponse.ok) {
+    applySecurityHeaders(headers);
+    return new Response(request.method === "HEAD" ? null : assetResponse.body, {
+      status: assetResponse.status,
+      statusText: assetResponse.statusText,
+      headers,
+    });
+  }
+
+  applySecurityHeaders(headers, {
+    cacheControl: staticAssetCacheControl(pathname),
+    robots: null,
+  });
 
   return new Response(request.method === "HEAD" ? null : assetResponse.body, {
     status: assetResponse.status,
@@ -364,7 +406,9 @@ export async function handleRequest(
 
   if (url.pathname === "/") {
     if (request.method === "GET" || request.method === "HEAD") {
-      return htmlAssetResponse(request, env, "/", request.method === "HEAD");
+      return htmlAssetResponse(request, env, "/", request.method === "HEAD", {
+        robots: PUBLIC_ROBOTS_DIRECTIVE,
+      });
     }
     return errorResponse(
       405,
@@ -412,9 +456,11 @@ export async function handleRequest(
       url.pathname.startsWith("/fonts/") ||
       url.pathname === "/robots.txt" ||
       url.pathname === "/site.webmanifest" ||
+      url.pathname === "/og.png" ||
+      url.pathname === "/sitemap.xml" ||
       url.pathname === "/favicon.ico")
   ) {
-    return staticAssetResponse(request, env);
+    return staticAssetResponse(request, env, url.pathname);
   }
 
   if (url.pathname === "/api/totp") {
