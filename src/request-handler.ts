@@ -147,6 +147,11 @@ async function staticAssetResponse(
     assetResponse.ok && headers.get("Content-Type")?.startsWith("text/html") === true;
 
   if (assetResponse.status === 404 || htmlFallback) {
+    headers.delete("Content-Encoding");
+    headers.delete("Content-Length");
+    headers.delete("Content-Range");
+    headers.delete("ETag");
+    headers.delete("Last-Modified");
     headers.set("Content-Type", REPRESENTATION_CONTENT_TYPES.plain);
     applySecurityHeaders(headers);
     return new Response(request.method === "HEAD" ? null : "Not found.\n", {

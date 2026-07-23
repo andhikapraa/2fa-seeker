@@ -193,6 +193,10 @@ describe("Worker route contract", () => {
       expect(response.headers.get("X-Robots-Tag"), path).toBe(
         "noindex, nofollow, noarchive, nosnippet",
       );
+      expect(response.headers.get("Content-Encoding"), path).toBeNull();
+      expect(response.headers.get("Content-Range"), path).toBeNull();
+      expect(response.headers.get("ETag"), path).toBeNull();
+      expect(response.headers.get("Last-Modified"), path).toBeNull();
       expect(await response.text(), path).toBe("Not found.\n");
     }
   });
