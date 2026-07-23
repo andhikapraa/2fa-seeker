@@ -32,6 +32,7 @@ Reports are handled on a best-effort basis. This project does not currently oper
 | `/slow` | Pasted secret is processed locally after first-party assets load |
 | `/1k` | Pasted secret is processed locally in one self-contained document |
 | `POST /api/totp` | Secret is processed by the Cloudflare Worker from the request body |
+| `GET /s/<secret>` | Secret is processed by the Worker and exposed in the URL path; the response is minimal HTML |
 | `GET /<secret>` | Secret is processed by the Worker and exposed in the URL path; less private |
 
 The application does not claim zero knowledge or complete erasure. Browser extensions, device compromise, screenshots, clipboard history, shell history, browser history, and Cloudflare's infrastructure remain outside the application's control.

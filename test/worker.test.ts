@@ -107,6 +107,34 @@ describe("Worker route contract", () => {
     expectSecretResponseHeaders(response);
   });
 
+  it("serves a CSS-free minimal HTML code", async () => {
+    const response = await dispatch(`/s/${RFC_BASE32_SECRET}`);
+    const body = await response.text();
+
+    expect(response.status).toBe(200);
+    expect(response.headers.get("Content-Type")).toBe("text/html; charset=utf-8");
+    expect(body).toBe("<meta http-equiv=refresh content=1><h1>287082</h1>");
+    expect(body).not.toMatch(/<(?:script|style|link)\b/i);
+    expect(body).toContain("http-equiv=refresh");
+    expect(body).not.toContain(RFC_BASE32_SECRET);
+    expectSecretResponseHeaders(response);
+
+    const head = await dispatch(`/s/${RFC_BASE32_SECRET}`, { method: "HEAD" });
+    expect(head.status).toBe(200);
+    expect(head.headers.get("Content-Type")).toBe("text/html; charset=utf-8");
+    expect(await head.text()).toBe("");
+  });
+
+  it("rejects an invalid minimal-route secret without echoing it", async () => {
+    const submitted = "INVALID0";
+    const response = await dispatch(`/s/${submitted}`);
+    const body = await response.text();
+
+    expect(response.status).toBe(400);
+    expect(body).not.toContain(submitted);
+    expectSecretResponseHeaders(response);
+  });
+
   it("supports text and JSON POST requests", async () => {
     const textResponse = await dispatch("/api/totp", {
       method: "POST",
@@ -187,6 +215,10 @@ describe("Worker route contract", () => {
     const api = await dispatch("/api/totp", { method: "GET" });
     expect(api.status).toBe(405);
     expect(api.headers.get("Allow")).toBe("POST");
+
+    const minimal = await dispatch(`/s/${RFC_BASE32_SECRET}`, { method: "POST" });
+    expect(minimal.status).toBe(405);
+    expect(minimal.headers.get("Allow")).toBe("GET, HEAD");
   });
 
   it("returns 413 for an oversized request body", async () => {

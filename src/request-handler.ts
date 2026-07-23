@@ -243,6 +243,69 @@ async function handleApiTotp(
   }
 }
 
+function generateDefaultTotpFromPath(rawPathValue: string, timestampMs: number): TotpResult {
+  if (rawPathValue.length > MAX_SECRET_INPUT_LENGTH) {
+    throw new SecretInputError("too_long");
+  }
+
+  let decoded: string;
+  try {
+    decoded = decodeURIComponent(rawPathValue);
+  } catch {
+    throw new SecretInputError("invalid_base32");
+  }
+
+  const parsedSecret = parseBase32Secret(decoded);
+  const parameters = validateTotpParameters();
+  return generateTotp(prepareTotpSecret(parsedSecret.bytes), parameters, timestampMs);
+}
+
+function minimalHtmlResponse(result: TotpResult, head: boolean): Response {
+  return new Response(
+    head
+      ? null
+      : `<meta http-equiv=refresh content=${result.secondsRemaining}><h1>${result.code}</h1>`,
+    {
+      status: 200,
+      headers: createHeaders("html"),
+    },
+  );
+}
+
+function handleMinimalSecret(
+  request: Request,
+  rawPathValue: string,
+  timestampMs: number,
+): Response {
+  if (request.method !== "GET" && request.method !== "HEAD") {
+    return errorResponse(405, "Method not allowed.", "plain", { Allow: "GET, HEAD" });
+  }
+
+  try {
+    return minimalHtmlResponse(
+      generateDefaultTotpFromPath(rawPathValue, timestampMs),
+      request.method === "HEAD",
+    );
+  } catch (error) {
+    if (error instanceof SecretInputError) {
+      return errorResponse(
+        400,
+        "Invalid Base32 secret.",
+        "plain",
+        undefined,
+        request.method === "HEAD",
+      );
+    }
+    return errorResponse(
+      500,
+      "Internal server error.",
+      "plain",
+      undefined,
+      request.method === "HEAD",
+    );
+  }
+}
+
 async function handleDirectSecret(
   request: Request,
   env: Env,
@@ -269,20 +332,7 @@ async function handleDirectSecret(
   }
 
   try {
-    if (rawPathValue.length > MAX_SECRET_INPUT_LENGTH) {
-      throw new SecretInputError("too_long");
-    }
-
-    let decoded: string;
-    try {
-      decoded = decodeURIComponent(rawPathValue);
-    } catch {
-      throw new SecretInputError("invalid_base32");
-    }
-
-    const parsedSecret = parseBase32Secret(decoded);
-    const parameters = validateTotpParameters();
-    const result = generateTotp(prepareTotpSecret(parsedSecret.bytes), parameters, timestampMs);
+    const result = generateDefaultTotpFromPath(rawPathValue, timestampMs);
     return successResponse(result, representation, request.method === "HEAD");
   } catch (error) {
     if (error instanceof SecretInputError) {
@@ -346,6 +396,13 @@ export async function handleRequest(
       selectErrorRepresentation(acceptHeader),
       { Allow: "GET, HEAD" },
     );
+  }
+
+  if (url.pathname.startsWith("/s/")) {
+    const minimalPathValue = url.pathname.slice(3);
+    if (!minimalPathValue.includes("/")) {
+      return handleMinimalSecret(request, minimalPathValue, timestampMs);
+    }
   }
 
   if (

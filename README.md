@@ -28,6 +28,7 @@ TOTP tools often hide the most important fact: whether the credential stays on y
 | [`/slow`](https://2fa.prasetya.dev/slow) | Your browser tab | Low-bandwidth use with fixed SHA-1, 6-digit, 30-second settings |
 | [`/1k`](https://2fa.prasetya.dev/1k) | Your browser tab | One self-contained request with fixed settings and no secondary controls |
 | `POST /api/totp` | The Cloudflare Worker | Recommended command-line and programmatic interface |
+| `GET /s/<BASE32_SECRET>` | URL path, Cloudflare Worker, browser history and process arguments | Display-only HTML with one large code and automatic refresh at rollover; less private |
 | `GET /<BASE32_SECRET>` | URL path, Cloudflare Worker, browser history and process arguments | Compatibility only; less private |
 
 Browser-local does not mean that every surrounding system is trusted. Browser extensions, screenshots, the clipboard, and the device itself remain outside this application's control.
@@ -94,6 +95,14 @@ curl -fsS "https://2fa.prasetya.dev/$TOTP_SECRET"
 ```
 
 That form exposes the expanded secret in the URL, shell process arguments, and infrastructure that handles the request.
+
+For a display-only browser page with no CSS or JavaScript:
+
+```text
+https://2fa.prasetya.dev/s/<BASE32_SECRET>
+```
+
+The response contains only hidden refresh metadata and a single `<h1>` with the current code. It has the same URL-exposure risks as the compatibility route.
 
 ## Security model
 
