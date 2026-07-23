@@ -61,6 +61,7 @@ Space Grotesk carries headings, labels, controls, and prose. The two-line task h
 
 ## Components
 
+- The brand mark pairs a nine-segment rollover arc with six gold code cells; it appears at 36px in the primary masthead and scales down to a favicon without introducing a security cliché.
 - Controls use 6px corners, 44px minimum height, and visible gold focus rings.
 - The instrument panel uses an 8px corner, one structural border, and no resting shadow.
 - A compact RFC 6238 rail frames the panel as one purpose-built instrument rather than two generic cards.

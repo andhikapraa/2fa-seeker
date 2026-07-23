@@ -408,8 +408,10 @@ export async function handleRequest(
   if (
     (request.method === "GET" || request.method === "HEAD") &&
     (url.pathname.startsWith("/assets/") ||
+      url.pathname.startsWith("/icons/") ||
       url.pathname.startsWith("/fonts/") ||
       url.pathname === "/robots.txt" ||
+      url.pathname === "/site.webmanifest" ||
       url.pathname === "/favicon.ico")
   ) {
     return staticAssetResponse(request, env);

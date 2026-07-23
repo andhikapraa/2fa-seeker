@@ -76,8 +76,28 @@ describe("Worker route contract", () => {
     expect(response.status).toBe(200);
     expect(response.headers.get("Content-Type")).toBe("text/html; charset=utf-8");
     expect(body).toContain("<h1><span>Generate a</span><span>TOTP code</span></h1>");
+    expect(body).toContain('rel="icon" href="/icons/icon.svg"');
+    expect(body).toContain('rel="manifest" href="/site.webmanifest"');
+    expect(body).toContain('class="brand-icon" src="/icons/icon.svg"');
     expect(body).not.toContain(RFC_BASE32_SECRET);
     expectSecretResponseHeaders(response);
+  });
+
+  it("serves the favicon, web icons, and manifest", async () => {
+    const assets = [
+      ["/favicon.ico", "image/"],
+      ["/icons/icon.svg", "image/svg+xml"],
+      ["/icons/icon-192.png", "image/png"],
+      ["/icons/icon-512.png", "image/png"],
+      ["/icons/apple-touch-icon.png", "image/png"],
+      ["/site.webmanifest", "application/manifest+json"],
+    ] as const;
+
+    for (const [path, contentType] of assets) {
+      const response = await dispatch(path);
+      expect(response.status, path).toBe(200);
+      expect(response.headers.get("Content-Type"), path).toContain(contentType);
+    }
   });
 
   it("serves the dedicated low-network shell", async () => {

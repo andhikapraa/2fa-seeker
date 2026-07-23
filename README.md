@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="docs/assets/2fa-icon.png" width="128" height="128" alt="2FA TOTP Generator icon">
+</p>
+
 # 2FA TOTP Generator
 
 [![CI](https://github.com/andhikapraa/2fa-seeker/actions/workflows/ci.yml/badge.svg)](https://github.com/andhikapraa/2fa-seeker/actions/workflows/ci.yml)

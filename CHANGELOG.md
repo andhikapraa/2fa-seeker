@@ -4,6 +4,14 @@ All notable changes to this project are documented here.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project uses semantic versioning.
 
+## [1.2.0] - 2026-07-23
+
+### Added
+
+- Segmented rollover and six-code-cell brand icon generated from Gemini exploration and refined for small-size legibility.
+- SVG, multi-size favicon, Apple touch icon, and 192px and 512px web app icons.
+- Web app manifest, browser theme metadata, visible masthead mark, and README icon.
+
 ## [1.1.0] - 2026-07-23
 
 ### Added
@@ -25,5 +33,6 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 - Apache-2.0 project licensing and complete third-party software and font notices.
 - Public contribution, security, conduct, CI, Dependabot, issue, and pull-request workflows.
 
+[1.2.0]: https://github.com/andhikapraa/2fa-seeker/releases/tag/v1.2.0
 [1.1.0]: https://github.com/andhikapraa/2fa-seeker/releases/tag/v1.1.0
 [1.0.0]: https://github.com/andhikapraa/2fa-seeker/releases/tag/v1.0.0
