@@ -143,6 +143,19 @@ select {
   margin-bottom: 10px;
 }
 
+.brand-lockup {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.brand-icon {
+  display: block;
+  width: 36px;
+  height: 36px;
+  flex: none;
+}
+
 .identifier {
   margin: 0;
   color: var(--text-faint);
@@ -150,6 +163,7 @@ select {
   font-size: 0.75rem;
   line-height: 1.3;
   letter-spacing: 0.08em;
+  white-space: nowrap;
 }
 
 .low-network-link {
@@ -737,6 +751,22 @@ pre {
   .page-shell {
     width: min(100% - 20px, 420px);
     padding-top: 28px;
+  }
+
+  .brand-lockup {
+    gap: 8px;
+  }
+
+  .brand-icon {
+    width: 32px;
+    height: 32px;
+  }
+
+  .identifier,
+  .low-network-link {
+    font-size: 0.625rem;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
   }
 
   h1 {

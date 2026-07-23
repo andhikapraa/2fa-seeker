@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <title>2FA TOTP Generator</title>
+  <rect width="512" height="512" fill="#191A1D"/>
+  <g fill="#F7F7F5">
+    <polygon points="127.9,245.6 132.0,222.0 63.1,209.8 58.9,233.4"/>
+    <polygon points="139.1,202.4 151.1,181.6 90.5,146.6 78.5,167.4"/>
+    <polygon points="164.5,165.7 182.9,150.2 137.9,96.6 119.5,112.0"/>
+    <polygon points="200.9,139.8 223.5,131.6 199.6,65.8 177.0,74.0"/>
+    <polygon points="244.0,128.0 268.0,128.0 268.0,58.0 244.0,58.0"/>
+    <polygon points="288.5,131.6 311.1,139.8 335.0,74.0 312.4,65.8"/>
+    <polygon points="329.1,150.2 347.5,165.7 392.5,112.0 374.1,96.6"/>
+    <polygon points="360.9,181.6 372.9,202.4 433.5,167.4 421.5,146.6"/>
+    <polygon points="380.0,222.0 384.1,245.6 453.1,233.4 448.9,209.8"/>
+  </g>
+  <g fill="#F3CA32">
+    <rect x="82" y="302" width="44" height="116" rx="3"/>
+    <rect x="143" y="302" width="44" height="116" rx="3"/>
+    <rect x="204" y="302" width="44" height="116" rx="3"/>
+    <rect x="265" y="302" width="44" height="116" rx="3"/>
+    <rect x="326" y="302" width="44" height="116" rx="3"/>
+    <rect x="387" y="302" width="44" height="116" rx="3"/>
+  </g>
+</svg>

@@ -4,6 +4,13 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="color-scheme" content="dark" />
+    <meta name="theme-color" content="#191A1D" />
+    <link rel="icon" href="/icons/icon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/icons/favicon-32.png" type="image/png" sizes="32x32" />
+    <link rel="icon" href="/icons/favicon-16.png" type="image/png" sizes="16x16" />
+    <link rel="icon" href="/favicon.ico" sizes="16x16 32x32 48x48" />
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
     <meta name="robots" content="noindex, nofollow, noarchive, nosnippet" />
     <title>TOTP generator · prasetya.dev</title>
     <script>(()=>{const p=location.pathname;window.__TOTP_PATH__=p==="/"?null:p.slice(1);if(p==="/")window.__TOTP_SLOW_TIMER__=setTimeout(()=>location.replace("/slow"),10000);if(p!=="/"){document.documentElement.classList.add("has-path-secret");history.replaceState(null,"","/")}})();</script>
@@ -12,7 +19,10 @@
     <div class="page-shell">
       <header class="page-heading">
         <div class="heading-meta">
-          <p class="identifier">PRASETYA.DEV / TOTP</p>
+          <div class="brand-lockup">
+            <img class="brand-icon" src="/icons/icon.svg" width="36" height="36" alt="" />
+            <p class="identifier">PRASETYA.DEV / TOTP</p>
+          </div>
           <a class="low-network-link" href="/slow">Low-network mode</a>
         </div>
         <h1><span>Generate a</span><span>TOTP code</span></h1>
