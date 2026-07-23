@@ -123,7 +123,9 @@ The project minimizes credential exposure; it does not promise zero knowledge or
 
 - `POST /api/totp` sends the secret to Cloudflare in the request body.
 - `GET /<secret>` sends it in the URL path and is less private.
-- Responses use `Cache-Control: no-store`, `Referrer-Policy: no-referrer`, strict CSP, framing protection, and no permissive CORS.
+- HTML and secret-bearing responses use `Cache-Control: no-store`, `Referrer-Policy: no-referrer`, strict CSP, framing protection, and no permissive CORS.
+- Only `/` is canonical and indexable. `/slow`, `/1k`, API responses, and every URL-secret response emit `noindex`; `robots.txt` and `sitemap.xml` expose only the public root surface.
+- Fingerprinted assets, fonts, icons, the web manifest, and the social preview use bounded public caching without weakening secret-bearing response policy.
 - The Worker does not define custom request logging or application storage.
 
 Do not include a real TOTP secret in issues, pull requests, screenshots, logs, or vulnerability reports. Use published RFC test vectors only. See [SECURITY.md](SECURITY.md) for private reporting.

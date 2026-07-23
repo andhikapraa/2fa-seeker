@@ -4,6 +4,23 @@ All notable changes to this project are documented here.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project uses semantic versioning.
 
+## [1.3.0] - 2026-07-23
+
+### Added
+
+- Canonical root metadata, Open Graph and X cards, Schema.org `WebSite` and `WebApplication` data, and a branded 1200 × 630 social preview.
+- Root-only XML sitemap and crawler policy that exposes the public landing page while excluding API and display-secret namespaces.
+
+### Changed
+
+- The canonical `/` page is indexable, while `/slow`, `/1k`, API responses, and every URL-secret response retain explicit `noindex` headers.
+- Fingerprinted assets, fonts, and crawler-visible identity files now use bounded public caching; HTML and secret-bearing responses remain `no-store`.
+
+### Fixed
+
+- Replaced CSP-blocked inline countdown styles with a native progress element so timer updates render under the strict production policy.
+- Missing static asset requests now return private, uncached 404 responses instead of inheriting the application shell.
+
 ## [1.2.0] - 2026-07-23
 
 ### Added
@@ -33,6 +50,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 - Apache-2.0 project licensing and complete third-party software and font notices.
 - Public contribution, security, conduct, CI, Dependabot, issue, and pull-request workflows.
 
+[1.3.0]: https://github.com/andhikapraa/2fa-seeker/releases/tag/v1.3.0
 [1.2.0]: https://github.com/andhikapraa/2fa-seeker/releases/tag/v1.2.0
 [1.1.0]: https://github.com/andhikapraa/2fa-seeker/releases/tag/v1.1.0
 [1.0.0]: https://github.com/andhikapraa/2fa-seeker/releases/tag/v1.0.0

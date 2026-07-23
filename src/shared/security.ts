@@ -1,6 +1,7 @@
 export const BOOTSTRAP_CSP_HASH = "sha256-hJyxfS7BRirp1eCnbfv6pThnaM2I8JjAUCTI5Ac2+SU=";
 export const ONE_KB_SCRIPT_CSP_HASH = "sha256-ziQ2eKKcHDsgmy4q0DM5M7f2mV7UML/FkmKt7ifTTms=";
 export const ONE_KB_STYLE_CSP_HASH = "sha256-jfdpgB7C3gYAe6D8hVZTnKumrNFoYf4NDrQPwTP9b+Y=";
+export const JSON_LD_CSP_HASH = "sha256-o31zVbnJSaKChU826SH0xS6s3t/WWL5saEF/Bl2U1GI=";
 
 export const CONTENT_SECURITY_POLICY = [
   "default-src 'self'",
@@ -8,19 +9,33 @@ export const CONTENT_SECURITY_POLICY = [
   "form-action 'self'",
   "frame-ancestors 'none'",
   "object-src 'none'",
-  `script-src 'self' '${BOOTSTRAP_CSP_HASH}' '${ONE_KB_SCRIPT_CSP_HASH}'`,
+  `script-src 'self' '${BOOTSTRAP_CSP_HASH}' '${ONE_KB_SCRIPT_CSP_HASH}' '${JSON_LD_CSP_HASH}'`,
   `style-src 'self' '${ONE_KB_STYLE_CSP_HASH}'`,
   "font-src 'self'",
   "img-src 'self'",
   "connect-src 'none'",
 ].join("; ");
 
-export function applySecurityHeaders(headers: Headers): Headers {
-  headers.set("Cache-Control", "no-store");
+export const PRIVATE_ROBOTS_DIRECTIVE = "noindex, nofollow, noarchive, nosnippet";
+export const PUBLIC_ROBOTS_DIRECTIVE =
+  "all, max-image-preview:large, max-snippet:-1, max-video-preview:-1";
+
+export interface SecurityHeaderOptions {
+  cacheControl?: string;
+  robots?: string | null;
+}
+
+export function applySecurityHeaders(
+  headers: Headers,
+  options: SecurityHeaderOptions = {},
+): Headers {
+  headers.set("Cache-Control", options.cacheControl ?? "no-store");
   headers.set("Referrer-Policy", "no-referrer");
   headers.set("X-Content-Type-Options", "nosniff");
   headers.set("X-Frame-Options", "DENY");
-  headers.set("X-Robots-Tag", "noindex, nofollow, noarchive, nosnippet");
+  const robots = options.robots === undefined ? PRIVATE_ROBOTS_DIRECTIVE : options.robots;
+  if (robots === null) headers.delete("X-Robots-Tag");
+  else headers.set("X-Robots-Tag", robots);
   headers.set("Content-Security-Policy", CONTENT_SECURITY_POLICY);
   headers.set(
     "Permissions-Policy",
