@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="robots" content="noindex, nofollow, noarchive, nosnippet" />
+    <title>TOTP generator · prasetya.dev</title>
+    <script>(()=>{const p=location.pathname;window.__TOTP_PATH__=p==="/"?null:p.slice(1);if(p==="/")window.__TOTP_SLOW_TIMER__=setTimeout(()=>location.replace("/slow"),10000);if(p!=="/"){document.documentElement.classList.add("has-path-secret");history.replaceState(null,"","/")}})();</script>
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="page-heading">
+        <div class="heading-meta">
+          <p class="identifier">PRASETYA.DEV / TOTP</p>
+          <a class="low-network-link" href="/slow">Low-network mode</a>
+        </div>
+        <h1><span>Generate a</span><span>TOTP code</span></h1>
+        <p id="credential-boundary" class="credential-boundary">
+          Your secret is used in this tab and is not saved by this app.
+        </p>
+        <div id="url-warning" class="url-warning" role="note">
+          This secret came from the URL. The address bar is now cleared, but the URL request was
+          already sent to the service. Paste at <code>/</code> next time.
+        </div>
+      </header>
+
+      <main>
+        <section class="instrument" aria-labelledby="instrument-title">
+          <div class="instrument-rail" aria-hidden="true">
+            <span>STANDARD / RFC 6238</span>
+            <span>GENERATION / LOCAL</span>
+          </div>
+          <h2 id="instrument-title" class="sr-only">TOTP generator</h2>
+          <form id="totp-form" novalidate>
+            <div class="instrument-grid">
+              <section class="input-zone" aria-labelledby="input-title">
+                <div class="zone-heading">
+                  <h3 id="input-title">Secret input</h3>
+                </div>
+
+                <label class="field-label" for="secret-input">Base32 secret</label>
+                <div class="secret-control">
+                  <input
+                    id="secret-input"
+                    type="password"
+                    maxlength="1024"
+                    autocomplete="off"
+                    spellcheck="false"
+                    autocorrect="off"
+                    autocapitalize="none"
+                    aria-describedby="secret-help secret-error secret-length-warning"
+                    aria-invalid="false"
+                  />
+                  <button
+                    id="toggle-secret"
+                    class="button button--neutral secret-toggle"
+                    type="button"
+                    aria-pressed="false"
+                  >
+                    Show secret
+                  </button>
+                </div>
+                <p id="secret-help" class="field-help">Spaces between groups are allowed.</p>
+                <p id="secret-error" class="field-message field-message--error" hidden></p>
+                <p id="secret-length-warning" class="field-message" hidden>
+                  This secret is shorter than the 128-bit provisioning minimum in RFC 4226. It may
+                  still be required for a legacy account.
+                </p>
+
+                <button id="clear-secret" class="button button--neutral" type="button">
+                  Clear secret
+                </button>
+              </section>
+
+              <section class="result-zone" aria-labelledby="result-title">
+                <div class="zone-heading">
+                  <h3 id="result-title">Current code</h3>
+                </div>
+
+                <p id="result-metadata" class="result-metadata" hidden>
+                  SHA-1 · 6 digits · 30 seconds
+                </p>
+
+                <div id="result-empty" class="result-empty">
+                  Paste a valid Base32 secret to generate a code.
+                </div>
+                <div id="result-computing" class="result-computing" hidden>
+                  Computing current code…
+                </div>
+                <div id="result-valid" class="result-valid" hidden>
+                  <div class="code-output" tabindex="0" aria-label="Current TOTP code">
+                    <span id="code-accessible" class="sr-only"></span>
+                    <span class="code-groups" aria-hidden="true">
+                      <span id="code-group-one"></span>
+                      <span id="code-group-two"></span>
+                    </span>
+                  </div>
+
+                  <div class="timer-row">
+                    <span id="timer-text" class="timer-text" role="timer" aria-atomic="true"></span>
+                    <div class="timer-track" aria-hidden="true">
+                      <span id="timer-bar" class="timer-bar"></span>
+                    </div>
+                  </div>
+
+                  <button id="copy-code" class="button button--primary" type="button" disabled>
+                    Copy code
+                  </button>
+                  <p id="copy-feedback" class="copy-feedback" hidden></p>
+                </div>
+              </section>
+            </div>
+
+            <p id="clock-note" class="clock-note" hidden>
+              Uses this device's clock. If codes fail, check that automatic date and time are enabled.
+            </p>
+
+            <details class="advanced-settings">
+              <summary>Advanced settings</summary>
+              <div class="settings-grid">
+                <label>
+                  <span>Algorithm</span>
+                  <select id="algorithm-input">
+                    <option value="SHA1">SHA-1</option>
+                    <option value="SHA256">SHA-256</option>
+                    <option value="SHA512">SHA-512</option>
+                  </select>
+                </label>
+                <label>
+                  <span>Digits</span>
+                  <select id="digits-input">
+                    <option value="6">6 digits</option>
+                    <option value="8">8 digits</option>
+                  </select>
+                </label>
+                <label>
+                  <span>Period</span>
+                  <span class="period-control">
+                    <input
+                      id="period-input"
+                      type="number"
+                      min="1"
+                      max="3600"
+                      step="1"
+                      value="30"
+                      aria-describedby="settings-error"
+                      aria-invalid="false"
+                    />
+                    <span>seconds</span>
+                  </span>
+                </label>
+              </div>
+              <p id="settings-error" class="field-message field-message--error" hidden></p>
+            </details>
+          </form>
+        </section>
+
+        <section class="cli-docs" aria-labelledby="cli-title">
+          <div class="docs-heading">
+            <h2 id="cli-title">Use from the command line</h2>
+            <p>Send the secret in the request body for the recommended programmatic interface.</p>
+          </div>
+
+          <div class="docs-examples">
+            <h3>Plain code</h3>
+            <pre><code>printf '%s' "$TOTP_SECRET" |
+  curl -fsS \
+    -H 'Content-Type: text/plain' \
+    --data-binary @- \
+    https://2fa.prasetya.dev/api/totp</code></pre>
+
+            <h3>JSON metadata</h3>
+            <pre><code>printf '%s' "$TOTP_SECRET" |
+  curl -fsS \
+    -H 'Content-Type: text/plain' \
+    -H 'Accept: application/json' \
+    --data-binary @- \
+    https://2fa.prasetya.dev/api/totp</code></pre>
+
+            <h3>Compatibility URL, less private</h3>
+            <pre><code>curl -fsS "https://2fa.prasetya.dev/$TOTP_SECRET"</code></pre>
+            <p class="privacy-note">
+              The expanded seed appears in the URL and process arguments. Cloudflare terminates TLS
+              and processes the request. Prefer the body-based endpoint.
+            </p>
+          </div>
+        </section>
+      </main>
+
+      <div id="status-region" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div>
+    </div>
+
+    <script type="module" src="/src/app.ts"></script>
+  </body>
+</html>

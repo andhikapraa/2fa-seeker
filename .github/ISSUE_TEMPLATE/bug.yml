@@ -1,0 +1,67 @@
+name: Bug report
+description: Report reproducible incorrect behavior without sharing real credentials.
+title: "bug: "
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Do not paste a real TOTP seed, active code, Cloudflare credential, or private key. Use published RFC test vectors only. Report vulnerabilities through SECURITY.md instead of this public form.
+
+  - type: dropdown
+    id: surface
+    attributes:
+      label: Affected surface
+      options:
+        - Browser root form
+        - Low-network mode
+        - 1 kB mode
+        - POST /api/totp
+        - Direct secret route
+        - Build, test, or deployment tooling
+        - Documentation
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Reproduction steps
+      description: Provide the smallest reproducible sequence using test-only data.
+      placeholder: |
+        1. Open ...
+        2. Enter the RFC test value ...
+        3. Observe ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+    validations:
+      required: true
+
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      description: Browser or Bun version, operating system, and route when relevant.
+      placeholder: "Safari 19, macOS 26, /slow"
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: safety
+    attributes:
+      label: Credential safety
+      options:
+        - label: I used only test data and included no real TOTP or Cloudflare credentials.
+          required: true

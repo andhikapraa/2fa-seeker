@@ -1,0 +1,47 @@
+name: Feature request
+description: Propose a focused improvement to the user or contributor experience.
+title: "feature: "
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What concrete user or contributor problem should this solve?
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed change
+      description: Describe the smallest useful change.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: boundary
+    attributes:
+      label: Credential-boundary impact
+      options:
+        - No change
+        - Keeps processing in the browser
+        - Sends data to the Worker
+        - Changes URL handling
+        - Unsure
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Include simpler approaches or existing workflows that almost solve the problem.
+
+  - type: checkboxes
+    id: safety
+    attributes:
+      label: Credential safety
+      options:
+        - label: This request contains no real TOTP seed, active code, or account credential.
+          required: true

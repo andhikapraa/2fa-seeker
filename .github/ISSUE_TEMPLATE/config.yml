@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Private security report
+    url: https://github.com/andhikapraa/2fa-seeker/security/advisories/new
+    about: Report vulnerabilities privately. Never include a real TOTP seed.
+  - name: Security policy
+    url: https://github.com/andhikapraa/2fa-seeker/security/policy
+    about: Read the supported scope and credential-handling boundaries.

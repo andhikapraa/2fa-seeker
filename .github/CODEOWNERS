@@ -1,0 +1,11 @@
+* @andhikapraa
+
+/.github/ @andhikapraa
+/wrangler*.jsonc @andhikapraa
+/package.json @andhikapraa
+/bun.lock @andhikapraa
+/public/_headers @andhikapraa
+/src/request-handler.ts @andhikapraa
+/src/worker.ts @andhikapraa
+/src/shared/ @andhikapraa
+/SECURITY.md @andhikapraa

@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="robots" content="noindex, nofollow, noarchive, nosnippet" />
+    <title>Low-network TOTP · prasetya.dev</title>
+  </head>
+  <body>
+    <main class="slow-shell">
+      <header class="slow-heading">
+        <div class="slow-meta">
+          <span>PRASETYA.DEV / TOTP</span>
+          <a href="/">Full mode</a>
+        </div>
+        <h1>Low-network mode</h1>
+        <p>Your secret is used in this tab and is not saved by this app.</p>
+        <p class="defaults">SHA-1 · 6 digits · 30 seconds</p>
+      </header>
+
+      <form id="slow-form" novalidate>
+        <label for="slow-secret">Base32 secret</label>
+        <div class="secret-row">
+          <input
+            id="slow-secret"
+            type="password"
+            maxlength="1024"
+            autocomplete="off"
+            spellcheck="false"
+            autocorrect="off"
+            autocapitalize="none"
+            aria-describedby="slow-help slow-error slow-length-warning"
+            aria-invalid="false"
+          />
+          <button id="slow-toggle" type="button" aria-pressed="false">Show secret</button>
+        </div>
+        <p id="slow-help" class="help">Spaces between groups are allowed.</p>
+        <p id="slow-error" class="error" hidden></p>
+        <p id="slow-length-warning" class="notice" hidden>
+          This secret is shorter than the 128-bit provisioning minimum in RFC 4226.
+        </p>
+        <div class="actions">
+          <button class="primary" type="submit">Generate code</button>
+          <button id="slow-clear" type="button">Clear secret</button>
+        </div>
+      </form>
+
+      <section class="slow-result" aria-labelledby="slow-result-title">
+        <h2 id="slow-result-title">Current code</h2>
+        <p id="slow-empty">Enter a valid secret, then generate the code.</p>
+        <div id="slow-valid" hidden>
+          <output id="slow-code" class="code-output" aria-label="Current TOTP code"></output>
+          <p id="slow-timer" class="timer" role="timer" aria-atomic="true"></p>
+          <button id="slow-copy" class="primary" type="button" disabled>Copy code</button>
+          <p id="slow-copy-feedback" class="notice" hidden></p>
+        </div>
+      </section>
+
+      <footer>
+        <p>Uses this device's clock. Check automatic date and time if codes fail.</p>
+        <a href="/">Return to full mode</a> · <a href="/1k">Open 1 kB mode</a>
+      </footer>
+
+      <div id="slow-status" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div>
+    </main>
+    <script type="module" src="/src/slow.ts"></script>
+  </body>
+</html>

@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "composite": true,
+    "target": "ES2023",
+    "useDefineForClassFields": true,
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "lib": ["ES2023", "DOM", "DOM.Iterable"],
+    "types": ["vite/client"],
+    "allowImportingTsExtensions": false,
+    "verbatimModuleSyntax": true,
+    "noEmit": true,
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitOverride": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true
+  },
+  "include": ["src/app.ts", "src/slow.ts", "src/shared/**/*.ts", "src/vite-env.d.ts"]
+}

@@ -1,0 +1,43 @@
+{
+  "name": "twofa-seeker",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Standards-compliant TOTP generation with explicit browser, API-body, and URL credential boundaries.",
+  "license": "Apache-2.0",
+  "author": "@andhikapraa",
+  "homepage": "https://2fa.prasetya.dev",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/andhikapraa/2fa-seeker.git"
+  },
+  "bugs": {
+    "url": "https://github.com/andhikapraa/2fa-seeker/issues"
+  },
+  "packageManager": "bun@1.3.14",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "dev:worker": "bun run build && wrangler dev",
+    "build": "vite build",
+    "check": "tsc -b",
+    "test": "bun run build && vitest run",
+    "test:watch": "vitest",
+    "cf:typegen": "wrangler types",
+    "deploy": "bun run build && wrangler deploy",
+    "deploy:production": "bun run build && wrangler deploy --config wrangler.production.jsonc",
+    "deploy:dry": "bun run build && wrangler deploy --dry-run",
+    "deploy:production:dry": "bun run build && wrangler deploy --config wrangler.production.jsonc --dry-run",
+    "check:startup": "wrangler check startup"
+  },
+  "dependencies": {
+    "otpauth": "^9.5.1"
+  },
+  "devDependencies": {
+    "@cloudflare/vitest-pool-workers": "^0.18.7",
+    "@cloudflare/workers-types": "^5.20260722.1",
+    "typescript": "^7.0.2",
+    "vite": "^8.1.5",
+    "vitest": "^4.1.10",
+    "wrangler": "^4.113.0"
+  }
+}
