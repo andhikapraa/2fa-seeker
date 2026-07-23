@@ -194,6 +194,7 @@ describe("Worker route contract", () => {
         "noindex, nofollow, noarchive, nosnippet",
       );
       expect(response.headers.get("Content-Encoding"), path).toBeNull();
+      expect(response.headers.get("Content-Length"), path).toBeNull();
       expect(response.headers.get("Content-Range"), path).toBeNull();
       expect(response.headers.get("ETag"), path).toBeNull();
       expect(response.headers.get("Last-Modified"), path).toBeNull();
