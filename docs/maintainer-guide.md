@@ -9,7 +9,7 @@ Recommended GitHub metadata:
 - **Description:** Standards-compliant TOTP generation with explicit local, API-body, and URL credential boundaries.
 - **Website:** `https://2fa.prasetya.dev`
 - **Topics:** `totp`, `2fa`, `rfc6238`, `cloudflare-workers`, `typescript`, `web-crypto`, `security`, `bun`
-- **Social preview:** `docs/assets/totp-generator.png`
+- **Social preview:** upload `public/og.png` in the GitHub repository settings.
 
 ## Actions settings
 
@@ -78,7 +78,7 @@ Use a scoped Cloudflare API token rather than a global API key for non-interacti
 5. Review CodeQL, Dependabot, and secret-scanning alerts.
 6. Confirm no `.env*`, `.dev.vars*`, `.wrangler`, `.gstack`, real TOTP material, or internal prompt files are staged.
 7. Verify `LICENSE`, `THIRD_PARTY_NOTICES.md`, `public/THIRD_PARTY_NOTICES.txt`, and `public/fonts/LICENSE.txt` are present.
-8. Smoke-test `/`, `/slow`, `/1k`, `POST /api/totp`, and the direct plain-text route.
+8. Smoke-test `/`, `/slow`, `/1k`, `POST /api/totp`, and the direct plain-text route; verify root canonical/social metadata, `robots.txt`, `sitemap.xml`, and public/private `X-Robots-Tag` headers.
 9. Create a signed `v*` tag from protected `main`.
 10. Generate release notes and name any accepted security advisory.
 
