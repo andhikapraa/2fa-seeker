@@ -77,6 +77,8 @@ describe("Worker route contract", () => {
     expect(response.headers.get("Content-Type")).toBe("text/html; charset=utf-8");
     expect(body).toContain("<h1><span>Generate a</span><span>TOTP code</span></h1>");
     expect(body).toContain('rel="icon" href="/icons/icon.svg"');
+    expect(body).toContain('href="/icons/favicon-32.png"');
+    expect(body).toContain('href="/icons/favicon-16.png"');
     expect(body).toContain('rel="manifest" href="/site.webmanifest"');
     expect(body).toContain('class="brand-icon" src="/icons/icon.svg"');
     expect(body).not.toContain(RFC_BASE32_SECRET);
