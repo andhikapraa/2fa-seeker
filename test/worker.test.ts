@@ -89,6 +89,8 @@ describe("Worker route contract", () => {
     const assets = [
       ["/favicon.ico", "image/"],
       ["/icons/icon.svg", "image/svg+xml"],
+      ["/icons/favicon-16.png", "image/png"],
+      ["/icons/favicon-32.png", "image/png"],
       ["/icons/icon-192.png", "image/png"],
       ["/icons/icon-512.png", "image/png"],
       ["/icons/apple-touch-icon.png", "image/png"],
