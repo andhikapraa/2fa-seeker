@@ -1,2 +1,6 @@
 User-agent: *
-Disallow: /
+Allow: /
+Disallow: /api/
+Disallow: /s/
+
+Sitemap: https://2fa.prasetya.dev/sitemap.xml
